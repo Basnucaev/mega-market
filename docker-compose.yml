@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+  service:
+    image: abdullah_basnucaev/mega-market:latest
+    container_name: service_market
+    restart: "always"
+    environment:
+      JDBC_URI: "jdbc:postgresql://db:5432/basnucaev_db"
+      SPRING_DATASOURCE_USERNAME: "frlrxswkqpujbt"
+      SPRING_DATASOURCE_PASSWORD: "061f56ebbddf9d4519ea78bdaf7616036c340dc65fe568fa7c129b9e04d96b78"
+    ports:
+      - "80:80"
+    networks:
+      - backend
+
+  db:
+    image: postgres:latest
+    container_name: db_market
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=50"
+      - "-c"
+      - "shared_buffers=1GB"
+      - "-c"
+      - "effective_cache_size=4GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "temp_file_limit=10GB"
+      - "-c"
+      - "log_min_duration_statement=200ms"
+      - "-c"
+      - "idle_in_transaction_session_timeout=10s"
+      - "-c"
+      - "lock_timeout=1s"
+      - "-c"
+      - "statement_timeout=60s"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.max=10000"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    environment:
+      POSTGRES_DB: "basnucaev_db"
+      POSTGRES_USER: "frlrxswkqpujbt"
+      POSTGRES_PASSWORD: "061f56ebbddf9d4519ea78bdaf7616036c340dc65fe568fa7c129b9e04d96b78"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - 'C:\Users\6\Desktop\data_from_db:/var/lib/postgresql/data'
+    ports:
+      - "8001:5432"
+    restart: "always"
+    networks:
+      - backend
+
+networks:
+ backend:
+   driver: bridge
