@@ -52,13 +52,17 @@ services:
       POSTGRES_PASSWORD: "061f56ebbddf9d4519ea78bdaf7616036c340dc65fe568fa7c129b9e04d96b78"
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - 'C:\Users\6\Desktop\data_from_db:/var/lib/postgresql/data'
+      - 'my_app_data:/var/lib/postgresql/data'
     ports:
       - "8001:5432"
     restart: "always"
     networks:
       - backend
 
+volumes:
+  my_app_data:
+
 networks:
  backend:
    driver: bridge
+

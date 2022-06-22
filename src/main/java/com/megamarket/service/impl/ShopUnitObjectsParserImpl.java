@@ -57,22 +57,6 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         return shopUnitList;
     }
 
-    private void setPriceNullToAllCategoriesWithNoChildren() {
-        List<ShopUnit> shopUnitList = shopUnitRepository.findAllByType(ShopUnitType.CATEGORY);
-        for (ShopUnit shopUnit : shopUnitList) {
-            if (shopUnit.getType() == ShopUnitType.CATEGORY && shopUnit.getChildren().size() == 0) {
-                shopUnit.setPrice(null);
-            }
-        }
-    }
-
-    private void updateDateForAlLCategories(List<ShopUnit> shopUnitList, LocalDateTime updateDate) {
-        shopUnitList.stream()
-                .filter((x) -> x.getType() == ShopUnitType.CATEGORY)
-                .filter((x) -> x.getDate() != updateDate).
-                forEach((x) -> x.setDate(updateDate));
-    }
-
     @Override
     public ShopUnitStatisticUnit parseShopUnitToShopUnitStatisticUnit(ShopUnit shopUnit) {
         ShopUnitStatisticUnit statisticUnit = transformShopUnitToStatisticUnit(shopUnit);
@@ -229,5 +213,21 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
                 }
             }
         }
+    }
+
+    private void setPriceNullToAllCategoriesWithNoChildren() {
+        List<ShopUnit> shopUnitList = shopUnitRepository.findAllByType(ShopUnitType.CATEGORY);
+        for (ShopUnit shopUnit : shopUnitList) {
+            if (shopUnit.getType() == ShopUnitType.CATEGORY && shopUnit.getChildren().size() == 0) {
+                shopUnit.setPrice(null);
+            }
+        }
+    }
+
+    private void updateDateForAlLCategories(List<ShopUnit> shopUnitList, LocalDateTime updateDate) {
+        shopUnitList.stream()
+                .filter((x) -> x.getType() == ShopUnitType.CATEGORY)
+                .filter((x) -> x.getDate() != updateDate).
+                forEach((x) -> x.setDate(updateDate));
     }
 }

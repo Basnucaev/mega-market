@@ -1,29 +1,25 @@
 package com.megamarket.service.impl;
 
+import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.dto.ShopUnitStatisticResponse;
 import com.megamarket.dto.ShopUnitStatisticUnit;
 import com.megamarket.entity.ShopUnit;
-import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.entity.enums.ShopUnitType;
 import com.megamarket.exception.my.ImportUnitBadRequestException;
 import com.megamarket.exception.my.ShopUnitNotFoundException;
 import com.megamarket.repository.ShopUnitRepository;
 import com.megamarket.service.ShopUnitObjectsParser;
 import com.megamarket.service.ShopUnitService;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.DateFormatter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class ShopUnitServiceImpl implements ShopUnitService {

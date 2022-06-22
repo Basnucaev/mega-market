@@ -3,9 +3,7 @@ package com.megamarket.controller;
 import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.dto.ShopUnitStatisticResponse;
 import com.megamarket.dto.ShopUnitStatisticUnit;
-import com.megamarket.repository.ShopUnitRepository;
 import com.megamarket.service.ShopUnitService;
-import org.apache.tomcat.jni.Local;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
 public class ShopUnitController {
     private final ShopUnitService shopUnitService;
-    private final ShopUnitRepository shopUnitRepository;
 
-    public ShopUnitController(ShopUnitService shopUnitService, ShopUnitRepository shopUnitRepository) {
+    public ShopUnitController(ShopUnitService shopUnitService) {
         this.shopUnitService = shopUnitService;
-        this.shopUnitRepository = shopUnitRepository;
     }
 
     @PostMapping("/imports")
