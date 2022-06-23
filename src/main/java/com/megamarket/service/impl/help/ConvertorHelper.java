@@ -1,109 +1,26 @@
-package com.megamarket.service.impl;
+package com.megamarket.service.impl.help;
 
 import com.megamarket.dto.ShopUnitImport;
-import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.dto.ShopUnitStatisticUnit;
 import com.megamarket.entity.ShopUnit;
 import com.megamarket.entity.enums.ShopUnitType;
 import com.megamarket.repository.ShopUnitRepository;
-import com.megamarket.service.ShopUnitObjectsParser;
-import com.megamarket.service.Validator;
-import com.megamarket.service.impl.help.TransferInteger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
-    private final Validator validator;
+public class ConvertorHelper {
     private final ShopUnitRepository shopUnitRepository;
 
-    @Autowired
-    public ShopUnitObjectsParserImpl(Validator validator, ShopUnitRepository shopUnitRepository) {
-        this.validator = validator;
+    public ConvertorHelper(ShopUnitRepository shopUnitRepository) {
         this.shopUnitRepository = shopUnitRepository;
     }
 
-    @Override
-    public List<ShopUnit> parseShopUnitRequestObjectToShopUnit(ShopUnitRequest shopUnitRequest) {
-        List<ShopUnit> shopUnitList = new ArrayList<>();
-        List<ShopUnitImport> shopUnitImportList = shopUnitRequest.getItems();
-
-        validator.validateShopUnitRequestObject(shopUnitRequest);
-        validator.validateListOfShopUnitImport(shopUnitImportList);
-
-        for (ShopUnitImport shopUnitImport : shopUnitImportList) {
-            ShopUnit toSaveShopUnit = new ShopUnit();
-
-            assignParametersFromImportObjectToShopUnit(toSaveShopUnit, shopUnitImport, shopUnitRequest.getUpdateDate());
-
-            shopUnitRepository.save(toSaveShopUnit);
-            shopUnitList.add(toSaveShopUnit);
-        }
-
-        addParentsToUnits(shopUnitImportList, shopUnitList);
-
-        addAllParentCategoriesToShopUnitList(shopUnitList, new ArrayList<>(shopUnitList));
-        updateDateForAlLCategories(shopUnitList, shopUnitRequest.getUpdateDate());
-
-        setPriceToAllCategories(shopUnitList);
-
-        setPriceNullToAllCategoriesWithNoChildren();
-        return shopUnitList;
-    }
-
-    @Override
-    public ShopUnitStatisticUnit parseShopUnitToShopUnitStatisticUnit(ShopUnit shopUnit) {
-        ShopUnitStatisticUnit statisticUnit = transformShopUnitToStatisticUnit(shopUnit);
-
-        if (statisticUnit.getType() == ShopUnitType.CATEGORY) {
-            transformShopUnitChildrenToStatisticUnitChildren(shopUnit, statisticUnit);
-        }
-        return statisticUnit;
-    }
-
-    @Override
-    public LocalDateTime parseStringToDate(String dateTimeString) {
-        dateTimeString = dateTimeString.replace('T', ' ');
-        dateTimeString = dateTimeString.replace('Z', ' ').trim();
-
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, format);
-
-        return dateTime;
-    }
-
-    private void addParentsToUnits(List<ShopUnitImport> shopUnitImportList, List<ShopUnit> shopUnitList) {
-        for (int i = 0; i < shopUnitImportList.size(); i++) {
-            ShopUnitImport currentImportUnit = shopUnitImportList.get(i);
-
-            ShopUnit parent = shopUnitList.stream()
-                    .filter((x) -> x.getId().equals(currentImportUnit.getParentId()))
-                    .filter((x) -> x.getType() == ShopUnitType.CATEGORY)
-                    .findFirst().orElse(null);
-
-            ShopUnit parentFromDb = shopUnitRepository.findByIdAndType(
-                    currentImportUnit.getParentId(),
-                    ShopUnitType.CATEGORY);
-
-            ShopUnit currentUnit = shopUnitList.get(i);
-
-            if (parent == null && parentFromDb != null && !shopUnitList.contains(parentFromDb)) {
-                currentUnit.setParent(parentFromDb);
-            } else {
-                currentUnit.setParent(parent);
-            }
-        }
-    }
-
-    private void assignParametersFromImportObjectToShopUnit(ShopUnit shopUnit, ShopUnitImport shopUnitImport,
-                                                            LocalDateTime dateFromShopUnitRequest) {
-        // к моменту выполнения этого метода все поля будет провалидированы
+    public void assignParametersFromImportObjectToShopUnit(ShopUnit shopUnit, ShopUnitImport shopUnitImport,
+                                                           LocalDateTime dateFromShopUnitRequest) {
         UUID id = shopUnitImport.getId();
         String name = shopUnitImport.getName();
         LocalDateTime updateDate = dateFromShopUnitRequest;
@@ -127,10 +44,9 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
                 shopUnit.setLastPriceUpdatedTime(unitFromDb.getLastPriceUpdatedTime());
             }
         }
-        // поле parent инициализируется в отдельном методе
     }
 
-    private ShopUnitStatisticUnit transformShopUnitToStatisticUnit(ShopUnit shopUnit) {
+    public ShopUnitStatisticUnit transformShopUnitToStatisticUnit(ShopUnit shopUnit) {
         ShopUnitStatisticUnit statisticUnit = new ShopUnitStatisticUnit();
         statisticUnit.setId(shopUnit.getId());
         statisticUnit.setName(shopUnit.getName());
@@ -153,7 +69,7 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         return statisticUnit;
     }
 
-    private void transformShopUnitChildrenToStatisticUnitChildren(ShopUnit shopUnit
+    public void transformShopUnitChildrenToStatisticUnitChildren(ShopUnit shopUnit
             , ShopUnitStatisticUnit shopUnitStatisticUnit) {
 
         int count = 0;
@@ -168,7 +84,30 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         }
     }
 
-    private void setPriceToAllCategories(List<ShopUnit> shopUnitList) {
+    public void addParentsToUnits(List<ShopUnitImport> shopUnitImportList, List<ShopUnit> shopUnitList) {
+        for (int i = 0; i < shopUnitImportList.size(); i++) {
+            ShopUnitImport currentImportUnit = shopUnitImportList.get(i);
+
+            ShopUnit parent = shopUnitList.stream()
+                    .filter((x) -> x.getId().equals(currentImportUnit.getParentId()))
+                    .filter((x) -> x.getType() == ShopUnitType.CATEGORY)
+                    .findFirst().orElse(null);
+
+            ShopUnit parentFromDb = shopUnitRepository.findByIdAndType(
+                    currentImportUnit.getParentId(),
+                    ShopUnitType.CATEGORY);
+
+            ShopUnit currentUnit = shopUnitList.get(i);
+
+            if (parent == null && parentFromDb != null && !shopUnitList.contains(parentFromDb)) {
+                currentUnit.setParent(parentFromDb);
+            } else {
+                currentUnit.setParent(parent);
+            }
+        }
+    }
+
+    public void setPriceToAllCategories(List<ShopUnit> shopUnitList) {
         for (ShopUnit currentShopUnit : shopUnitList) {
             if (currentShopUnit.getType() == ShopUnitType.CATEGORY) {
 
@@ -183,7 +122,7 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         }
     }
 
-    private TransferInteger calculatePriceForCategory(ShopUnit currentShopUnit) {
+    public TransferInteger calculatePriceForCategory(ShopUnit currentShopUnit) {
         int offersSumPrice = 0;
         int offersCount = 0;
         if (currentShopUnit.getChildren().size() > 0) {
@@ -200,7 +139,7 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         return new TransferInteger(offersSumPrice, offersCount);
     }
 
-    private void addAllParentCategoriesToShopUnitList(List<ShopUnit> shopUnitList, List<ShopUnit> copyOfOriginalList) {
+    public void addAllParentCategoriesToShopUnitList(List<ShopUnit> shopUnitList, List<ShopUnit> copyOfOriginalList) {
         for (ShopUnit shopUnit : copyOfOriginalList) {
             while (true) {
                 if (shopUnit.getParent() != null && !shopUnitList.contains(shopUnit.getParent())) {
@@ -215,7 +154,7 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         }
     }
 
-    private void setPriceNullToAllCategoriesWithNoChildren() {
+    public void setPriceNullToAllCategoriesWithNoChildren() {
         List<ShopUnit> shopUnitList = shopUnitRepository.findAllByType(ShopUnitType.CATEGORY);
         for (ShopUnit shopUnit : shopUnitList) {
             if (shopUnit.getType() == ShopUnitType.CATEGORY && shopUnit.getChildren().size() == 0) {
@@ -224,7 +163,7 @@ public class ShopUnitObjectsParserImpl implements ShopUnitObjectsParser {
         }
     }
 
-    private void updateDateForAlLCategories(List<ShopUnit> shopUnitList, LocalDateTime updateDate) {
+    public void updateDateForAlLCategories(List<ShopUnit> shopUnitList, LocalDateTime updateDate) {
         shopUnitList.stream()
                 .filter((x) -> x.getType() == ShopUnitType.CATEGORY)
                 .filter((x) -> x.getDate() != updateDate).

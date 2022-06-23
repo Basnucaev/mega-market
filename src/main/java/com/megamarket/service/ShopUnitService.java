@@ -3,8 +3,9 @@ package com.megamarket.service;
 import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.dto.ShopUnitStatisticResponse;
 import com.megamarket.dto.ShopUnitStatisticUnit;
+import com.megamarket.entity.ShopUnit;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface ShopUnitService {
@@ -13,7 +14,9 @@ public interface ShopUnitService {
 
     void deleteShopUnitById(UUID id);
 
-    ShopUnitStatisticUnit getShopUnitStatistic(UUID id);
+    ShopUnitStatisticUnit getShopUnitStatisticById(UUID id);
 
     ShopUnitStatisticResponse getSalesStatistic(String dateTimeString);
+
+    ShopUnitStatisticResponse getUnitsHistoryById(UUID id, String from, String to);
 }

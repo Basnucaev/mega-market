@@ -7,11 +7,11 @@ import com.megamarket.dto.ShopUnitRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ShopUnitObjectsParser {
+public interface DtoObjectsConvertor {
 
-    List<ShopUnit> parseShopUnitRequestObjectToShopUnit(ShopUnitRequest shopUnitRequest);
+    List<ShopUnit> parseShopUnitRequestObjectToShopUnitList(ShopUnitRequest shopUnitRequest);
 
-    ShopUnitStatisticUnit parseShopUnitToShopUnitStatisticUnit(ShopUnit shopUnit);
+    ShopUnitStatisticUnit parseShopUnitToStatisticUnit(ShopUnit shopUnit);
 
     LocalDateTime parseStringToDate(String dateTimeString);
 }
