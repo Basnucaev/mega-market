@@ -42,7 +42,7 @@ public class ShopUnitController {
 
     @GetMapping("/nodes/{id}")
     public ResponseEntity<?> getUnitNodesById(@PathVariable UUID id) {
-        ShopUnitStatisticUnit statistic = shopUnitService.getShopUnitStatistic(id);
+        ShopUnitStatisticUnit statistic = shopUnitService.getShopUnitStatisticById(id);
 
         return new ResponseEntity<>(statistic, HttpStatus.OK);
     }
@@ -53,5 +53,15 @@ public class ShopUnitController {
         ShopUnitStatisticResponse statistic = shopUnitService.getSalesStatistic(dateTime);
 
         return new ResponseEntity<>(statistic, HttpStatus.OK);
+    }
+
+    @GetMapping("/node/{id}/statistic")
+    public ResponseEntity<?> getUnitsHistoryById(
+            @PathVariable UUID id
+            , @RequestParam(name = "dateStart", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") String fromDateString
+            , @RequestParam(name = "dateEnd", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") String toDateString) {
+        ShopUnitStatisticResponse statistic = shopUnitService.getUnitsHistoryById(id, fromDateString, toDateString);
+
+        return new ResponseEntity<>(statistic , HttpStatus.OK);
     }
 }

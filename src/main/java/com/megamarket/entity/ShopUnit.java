@@ -1,6 +1,7 @@
 package com.megamarket.entity;
 
 import com.megamarket.entity.enums.ShopUnitType;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "shop_unit")
 @NoArgsConstructor
+@AllArgsConstructor
 public class ShopUnit {
 
     @Id

@@ -11,4 +11,6 @@ public interface Validator {
     void validateListOfShopUnitImport(List<ShopUnitImport> shopUnitImportList);
 
     void validateShopUnitRequestObject(ShopUnitRequest shopUnitRequest);
+
+    void validDateFormat(String dateTimeString);
 }

@@ -14,7 +14,4 @@ public class Error {
     int code;
 
     String message;
-
-    // отделить дто объекты от базы данных
-
 }

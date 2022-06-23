@@ -5,15 +5,15 @@ import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.entity.enums.ShopUnitType;
 import com.megamarket.exception.my.ImportUnitBadRequestException;
 import com.megamarket.exception.my.NoItemsToImportInRequestException;
-import com.megamarket.exception.my.ShopUnitUpdateDateNullException;
 import com.megamarket.service.Validator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ValidatorImpl implements Validator {
-
 
     @Override
     public void validateListOfShopUnitImport(List<ShopUnitImport> shopUnitImportList) {
@@ -53,6 +53,17 @@ public class ValidatorImpl implements Validator {
         }
 
         if (shopUnitRequest.getUpdateDate() == null) {
+            throw new ImportUnitBadRequestException();
+        }
+    }
+
+    @Override
+    public void validDateFormat(String dateTimeString) {
+        Pattern pattern = Pattern.compile(
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z");
+        Matcher matcher = pattern.matcher(dateTimeString);
+
+        if (!matcher.matches()) {
             throw new ImportUnitBadRequestException();
         }
     }
