@@ -1,8 +1,12 @@
 package com.megamarket.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.megamarket.entity.enums.ShopUnitType;
+import com.megamarket.entity.listeners.AuditListener;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +19,8 @@ import java.util.UUID;
 @Table(name = "shop_unit")
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditListener.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShopUnit {
 
     @Id
@@ -42,8 +48,20 @@ public class ShopUnit {
     @Column(name = "last_price_updated_time")
     private LocalDateTime lastPriceUpdatedTime;
 
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "parent")
+    @OneToMany(cascade = {CascadeType.REFRESH}, mappedBy = "parent")
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<ShopUnit> children = new ArrayList<>();
+
+
+    public ShopUnit(ShopUnit shopUnit) {
+        this.id = shopUnit.getId();
+        this.name = shopUnit.getName();
+        this.date = shopUnit.getDate();
+        this.parent = shopUnit.getParent();
+        this.type = shopUnit.getType();
+        this.price = shopUnit.getPrice();
+        this.children = shopUnit.getChildren();
+    }
 
     public UUID getId() {
         return id;

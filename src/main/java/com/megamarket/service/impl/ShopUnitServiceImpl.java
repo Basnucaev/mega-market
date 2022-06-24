@@ -42,10 +42,6 @@ public class ShopUnitServiceImpl implements ShopUnitService {
     public void saveShopUnit(ShopUnitRequest shopUnitRequest) {
         List<ShopUnit> shopUnits = convertor.parseShopUnitRequestObjectToShopUnitList(shopUnitRequest);
 
-        for (ShopUnit shopUnit : shopUnits) {
-            historyOfShopUnitRepository.save(new HistoryOfShopUnit(shopUnit.getDate(), shopUnit));
-        }
-
         shopUnitRepository.saveAll(shopUnits);
     }
 
@@ -104,14 +100,9 @@ public class ShopUnitServiceImpl implements ShopUnitService {
 
 
         List<HistoryOfShopUnit> historyOfUnitList = historyOfShopUnitRepository
-                .findAllByLinkedShopUnitIdAndUpdateDateGreaterThanAndUpdateDateLessThan(id, from, to);
+                .findAllByShopUnitIdAndUpdateDateGreaterThanAndUpdateDateLessThan(id, from, to);
 
-        List<ShopUnit> shopUnitList = new ArrayList<>();
-        for (HistoryOfShopUnit historyUnit : historyOfUnitList) {
-            shopUnitList.add(historyUnit.getLinkedShopUnit());
-        }
-
-        List<ShopUnitStatisticUnit> statisticUnitList = getListOfStatisticUnits(shopUnitList);
+        List<ShopUnitStatisticUnit> statisticUnitList = convertor.parseHistoryUnitsToStatisticUnits(historyOfUnitList);
 
         ShopUnitStatisticResponse statisticResponse = new ShopUnitStatisticResponse();
         statisticResponse.setChildren(statisticUnitList);
@@ -125,7 +116,7 @@ public class ShopUnitServiceImpl implements ShopUnitService {
                 deleteUnitAndAllHisChildrenIfTheFounded(currentUnit);
             }
         }
-        historyOfShopUnitRepository.deleteAllByLinkedShopUnitId(shopUnit.getId());
+        historyOfShopUnitRepository.deleteAllByShopUnitId(shopUnit.getId());
         shopUnitRepository.delete(shopUnit);
     }
 

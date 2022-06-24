@@ -3,6 +3,7 @@ package com.megamarket.service.impl;
 import com.megamarket.dto.ShopUnitImport;
 import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.dto.ShopUnitStatisticUnit;
+import com.megamarket.entity.HistoryOfShopUnit;
 import com.megamarket.entity.ShopUnit;
 import com.megamarket.entity.enums.ShopUnitType;
 import com.megamarket.repository.ShopUnitRepository;
@@ -44,7 +45,6 @@ public class DtoObjectsConvertorImpl implements DtoObjectsConvertor {
             convertorHelper.assignParametersFromImportObjectToShopUnit(toSaveShopUnit, shopUnitImport,
                     shopUnitRequest.getUpdateDate());
 
-            shopUnitRepository.save(toSaveShopUnit);
             shopUnitList.add(toSaveShopUnit);
         }
 
@@ -78,5 +78,25 @@ public class DtoObjectsConvertorImpl implements DtoObjectsConvertor {
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, format);
 
         return dateTime;
+    }
+
+    @Override
+    public List<ShopUnitStatisticUnit> parseHistoryUnitsToStatisticUnits(List<HistoryOfShopUnit> historyOfUnitList) {
+        List<ShopUnitStatisticUnit> shopUnitStatisticUnits = new ArrayList<>();
+
+        for (HistoryOfShopUnit currentHistoryUnit : historyOfUnitList) {
+            ShopUnitStatisticUnit statisticUnit = new ShopUnitStatisticUnit(
+                    currentHistoryUnit.getShopUnitId(),
+                    currentHistoryUnit.getName(),
+                    currentHistoryUnit.getParentId(),
+                    currentHistoryUnit.getType(),
+                    currentHistoryUnit.getPrice(),
+                    currentHistoryUnit.getUpdateDate(),
+                    null
+            );
+
+            shopUnitStatisticUnits.add(statisticUnit);
+        }
+        return shopUnitStatisticUnits;
     }
 }
