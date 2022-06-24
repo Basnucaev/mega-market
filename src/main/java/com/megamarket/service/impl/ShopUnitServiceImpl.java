@@ -54,12 +54,29 @@ public class ShopUnitServiceImpl implements ShopUnitService {
     }
 
     @Override
-    public ShopUnitStatisticUnit getShopUnitStatisticById(UUID id) {
+    public ShopUnit getShopUnitStatisticById(UUID id) {
         ShopUnit shopUnit = shopUnitRepository.findById(id).orElseThrow(ShopUnitNotFoundException::new);
 
-        ShopUnitStatisticUnit statisticUnit = convertor.parseShopUnitToStatisticUnit(shopUnit);
+        addParentIdToShopUnitAndSetChildrenNullIfOffer(shopUnit);
 
-        return statisticUnit;
+        return shopUnit;
+    }
+
+    private void addParentIdToShopUnitAndSetChildrenNullIfOffer(ShopUnit shopUnit) {
+        if (shopUnit.getType() == ShopUnitType.CATEGORY) {
+            if (shopUnit.getChildren().size() > 0) {
+                for (ShopUnit currentUnit : shopUnit.getChildren()) {
+                    currentUnit.setParentId(currentUnit.getParent().getId());
+                    addParentIdToShopUnitAndSetChildrenNullIfOffer(currentUnit);
+                }
+            }
+        }
+        if (shopUnit.getParent() != null) {
+            shopUnit.setParentId(shopUnit.getParent().getId());
+        }
+        if (shopUnit.getType() == ShopUnitType.OFFER) {
+            shopUnit.setChildren(null);
+        }
     }
 
     @Override

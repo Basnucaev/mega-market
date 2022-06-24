@@ -29,8 +29,6 @@ public class ShopUnitStatisticUnit {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     LocalDateTime date;
 
-    List<ShopUnitStatisticUnit> children;
-
     public UUID getId() {
         return id;
     }
@@ -77,17 +75,5 @@ public class ShopUnitStatisticUnit {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
-    }
-
-    public List<ShopUnitStatisticUnit> getChildren() {
-        if (this.type == ShopUnitType.CATEGORY && children == null) {
-            children = new ArrayList<>();
-            return children;
-        }
-        return children;
-    }
-
-    public void setChildren(List<ShopUnitStatisticUnit> children) {
-        this.children = children;
     }
 }

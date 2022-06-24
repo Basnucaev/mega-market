@@ -1,5 +1,7 @@
 package com.megamarket.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.megamarket.entity.enums.ShopUnitType;
 import com.megamarket.entity.listeners.AuditListener;
@@ -14,13 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 @Entity
 @Table(name = "shop_unit")
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditListener.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShopUnit {
 
     @Id
@@ -31,11 +31,17 @@ public class ShopUnit {
     private String name;
 
     @Column(name = "date", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime date;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private ShopUnit parent;
+
+    @Transient()
+    @JsonInclude
+    private UUID parentId;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "type", updatable = false)
@@ -46,6 +52,7 @@ public class ShopUnit {
 
 
     @Column(name = "last_price_updated_time")
+    @JsonIgnore
     private LocalDateTime lastPriceUpdatedTime;
 
     @OneToMany(cascade = {CascadeType.REFRESH}, mappedBy = "parent")
@@ -90,6 +97,14 @@ public class ShopUnit {
         this.date = date;
     }
 
+    public UUID getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(UUID parentId) {
+        this.parentId = parentId;
+    }
+
     public ShopUnit getParent() {
         return parent;
     }
@@ -98,7 +113,6 @@ public class ShopUnit {
         if (parent != null) {
             if (!parent.getChildren().contains(this)) {
                 parent.getChildren().add(this);
-
             }
             if (this.getId() == parent.getId()) {
                 parent = null;
