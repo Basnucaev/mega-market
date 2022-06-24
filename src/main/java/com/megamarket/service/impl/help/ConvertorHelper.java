@@ -62,26 +62,8 @@ public class ConvertorHelper {
         } else {
             statisticUnit.setPrice(shopUnit.getPrice());
         }
-        if (shopUnit.getType() == ShopUnitType.OFFER) {
-            statisticUnit.setChildren(null);
-        }
 
         return statisticUnit;
-    }
-
-    public void transformShopUnitChildrenToStatisticUnitChildren(ShopUnit shopUnit
-            , ShopUnitStatisticUnit shopUnitStatisticUnit) {
-
-        int count = 0;
-        if (shopUnit.getChildren().size() > 0) {
-            for (ShopUnit currentShopUnit : shopUnit.getChildren()) {
-                shopUnitStatisticUnit.getChildren().add(transformShopUnitToStatisticUnit(currentShopUnit));
-
-                ShopUnitStatisticUnit currentStatisticUnit = shopUnitStatisticUnit.getChildren().get(count++);
-
-                transformShopUnitChildrenToStatisticUnitChildren(currentShopUnit, currentStatisticUnit);
-            }
-        }
     }
 
     public void addParentsToUnits(List<ShopUnitImport> shopUnitImportList, List<ShopUnit> shopUnitList) {

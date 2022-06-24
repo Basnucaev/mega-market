@@ -2,7 +2,7 @@ package com.megamarket.controller;
 
 import com.megamarket.dto.ShopUnitRequest;
 import com.megamarket.dto.ShopUnitStatisticResponse;
-import com.megamarket.dto.ShopUnitStatisticUnit;
+import com.megamarket.entity.ShopUnit;
 import com.megamarket.service.ShopUnitService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -42,9 +42,9 @@ public class ShopUnitController {
 
     @GetMapping("/nodes/{id}")
     public ResponseEntity<?> getUnitNodesById(@PathVariable UUID id) {
-        ShopUnitStatisticUnit statistic = shopUnitService.getShopUnitStatisticById(id);
+        ShopUnit shopUnit = shopUnitService.getShopUnitStatisticById(id);
 
-        return new ResponseEntity<>(statistic, HttpStatus.OK);
+        return new ResponseEntity<>(shopUnit, HttpStatus.OK);
     }
 
     @GetMapping("/sales")

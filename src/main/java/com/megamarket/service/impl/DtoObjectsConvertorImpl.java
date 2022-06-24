@@ -63,9 +63,6 @@ public class DtoObjectsConvertorImpl implements DtoObjectsConvertor {
     public ShopUnitStatisticUnit parseShopUnitToStatisticUnit(ShopUnit shopUnit) {
         ShopUnitStatisticUnit statisticUnit = convertorHelper.transformShopUnitToStatisticUnit(shopUnit);
 
-        if (statisticUnit.getType() == ShopUnitType.CATEGORY) {
-            convertorHelper.transformShopUnitChildrenToStatisticUnitChildren(shopUnit, statisticUnit);
-        }
         return statisticUnit;
     }
 
@@ -91,8 +88,7 @@ public class DtoObjectsConvertorImpl implements DtoObjectsConvertor {
                     currentHistoryUnit.getParentId(),
                     currentHistoryUnit.getType(),
                     currentHistoryUnit.getPrice(),
-                    currentHistoryUnit.getUpdateDate(),
-                    null
+                    currentHistoryUnit.getUpdateDate()
             );
 
             shopUnitStatisticUnits.add(statisticUnit);
