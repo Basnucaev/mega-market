@@ -46,4 +46,14 @@ public class HistoryOfShopUnit {
 
     @Column(name = "price")
     private Integer price;
+
+    public HistoryOfShopUnit(UUID shopUnitId, String name, LocalDateTime updateDate, UUID parentId,
+                             ShopUnitType type, Integer price) {
+        this.shopUnitId = shopUnitId;
+        this.name = name;
+        this.updateDate = updateDate;
+        this.parentId = parentId;
+        this.type = type;
+        this.price = price;
+    }
 }

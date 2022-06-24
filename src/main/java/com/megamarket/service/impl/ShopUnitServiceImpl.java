@@ -42,6 +42,7 @@ public class ShopUnitServiceImpl implements ShopUnitService {
     public void saveShopUnit(ShopUnitRequest shopUnitRequest) {
         List<ShopUnit> shopUnits = convertor.parseShopUnitRequestObjectToShopUnitList(shopUnitRequest);
 
+        makeHistoryRecord(shopUnits);
         shopUnitRepository.saveAll(shopUnits);
     }
 
@@ -145,5 +146,26 @@ public class ShopUnitServiceImpl implements ShopUnitService {
             statisticUnitList.add(statisticUnit);
         }
         return statisticUnitList;
+    }
+
+    private void makeHistoryRecord(List<ShopUnit> shopUnits) {
+        List<HistoryOfShopUnit> historyOfShopUnit = new ArrayList<>();
+        for (ShopUnit shopUnit : shopUnits) {
+            HistoryOfShopUnit historyUnit = new HistoryOfShopUnit();
+            historyUnit.setShopUnitId(shopUnit.getId());
+            historyUnit.setPrice(shopUnit.getPrice());
+            historyUnit.setType(shopUnit.getType());
+            historyUnit.setName(shopUnit.getName());
+            historyUnit.setUpdateDate(shopUnit.getDate());
+            if (shopUnit.getParent() != null) {
+                historyUnit.setParentId(shopUnit.getParent().getId());
+            } else {
+                historyUnit.setParentId(null);
+            }
+
+            historyOfShopUnit.add(historyUnit);
+        }
+
+        historyOfShopUnitRepository.saveAll(historyOfShopUnit);
     }
 }

@@ -47,7 +47,7 @@ public class DtoObjectsConvertorImpl implements DtoObjectsConvertor {
 
             shopUnitList.add(toSaveShopUnit);
         }
-
+        shopUnitRepository.saveAll(shopUnitList);
         convertorHelper.addParentsToUnits(shopUnitImportList, shopUnitList);
 
         convertorHelper.addAllParentCategoriesToShopUnitList(shopUnitList, new ArrayList<>(shopUnitList));

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.megamarket.entity.enums.ShopUnitType;
-import com.megamarket.entity.listeners.AuditListener;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NotFound;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @Table(name = "shop_unit")
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditListener.class)
 public class ShopUnit {
 
     @Id
